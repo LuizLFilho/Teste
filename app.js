@@ -26,7 +26,16 @@ recadosRef.onSnapshot( (snapshot) => {
     snapshot.forEach( (doc) => {
         const recado = doc.data();
         const li = document.createElement('li');
-        li.textContent = `Recado ID: ${doc.id.substring(0, 5)} - Nome: ${recado.nome}`;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'X';
+        deleteBtn.classList.add('delete-btn');
+
+        deleteBtn.addEventListener('click', () => {
+            excluirRecado(recadoId);
+        });
+
+        li.appendChild(deleteBtn);
         listaRecados.appendChild(li);
     });
 
@@ -78,3 +87,18 @@ btnRemover.addEventListener('click', () => {
             console.error("Erro ao apagar todos os recados: ", error);
         });
 });
+
+
+function excluirRecado(idDoDocumento) {
+
+    const documentoParaDeletar = db.collection("recados").doc(idDoDocumento);
+    
+    documentoParaDeletar.delete()
+        .then(() => {
+            console.log(`Documento com ID ${idDoDocumento} apagado com sucesso!`);
+            // Não precisamos recarregar a lista, pois o onSnapshot fará isso automaticamente.
+        })
+        .catch((error) => {
+            console.error("Erro ao apagar o recado: ", error);
+        });
+}

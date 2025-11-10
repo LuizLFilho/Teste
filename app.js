@@ -25,6 +25,8 @@ recadosRef.onSnapshot( (snapshot) => {
     listaRecados.innerHTML = '';
     snapshot.forEach( (doc) => {
         const recado = doc.data();
+        const recadoId = doc.id;
+        
         const li = document.createElement('li');
 
         const deleteBtn = document.createElement('button');
@@ -42,6 +44,9 @@ recadosRef.onSnapshot( (snapshot) => {
 }, (error) => {
     console.error("Erro ao carregar os recados: ", error);
 });
+
+
+
 
 
 

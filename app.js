@@ -28,6 +28,7 @@ recadosRef.onSnapshot( (snapshot) => {
         const recadoId = doc.id;
         
         const li = document.createElement('li');
+        li.textContent = `Recado: ${recado.nome} (ID: ${recadoId.substring(0, 4)}...) `;
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'X';

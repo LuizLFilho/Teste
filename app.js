@@ -58,13 +58,23 @@ recadosRef.onSnapshot( (snapshot) => {
     });
 
 
+
 btnRemover.addEventListener('click', () => {
-    docRef.delete()
+    recadosRef.get()
+        .then((snapshot) => {
+
+            const promises = [];
+            
+            snapshot.forEach((doc) => {
+                promises.push(doc.ref.delete());
+            });
+
+            return Promise.all(promises);
+        })
         .then(() => {
-            console.log("Documento removido com sucesso!");
+            console.log("Todos os recados foram apagados com sucesso!");
         })
         .catch((error) => {
-            console.error("Erro ao remover o documento: ", error);
-            alert("Não foi possível remover os dados. Verifique o console.");
+            console.error("Erro ao apagar todos os recados: ", error);
         });
 });

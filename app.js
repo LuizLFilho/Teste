@@ -11,48 +11,51 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
+const recadosRef = db.collection("recados");
+const listaRecados = document.getElementById('listaRecados');
+
+
 const inputNome = document.getElementById('inputNome');
 const btnSalvar = document.getElementById('btnSalvar');
 const btnRemover = document.getElementById('btnRemover');
 const paragrafo = document.getElementById('paragrafo');
 
-const docRef = db.collection("saudacoes").doc("mensagem-atual");
 
+recadosRef.onSnapshot( (snapshot) => {
+    listaRecados.innerHTML = '';
+    snapshot.forEach( (doc) => {
+        const recado = doc.data();
+        const li = document.createElement('li');
+        li.textContent = `Recado ID: ${doc.id.substring(0, 5)} - Nome: ${recado.nome}`;
+        listaRecados.appendChild(li);
+    });
 
-docRef.onSnapshot((doc) => {
-    if (doc.exists) {
-        const data = doc.data();
-        paragrafo.textContent = `Olá, ${data.nome}! Este nome está guardado no servidor.`;
-    } else {
-        paragrafo.textContent = "Nenhum nome encontrado no servidor.";
-    }
 }, (error) => {
-    console.error("Erro ao ouvir o documento: ", error);
-    paragrafo.textContent = "Erro ao carregar os dados.";
+    console.error("Erro ao carregar os recados: ", error);
 });
 
 
 
-btnSalvar.addEventListener('click', () => {
-    const nomeDigitado = inputNome.value.trim();
+    btnSalvar.addEventListener('click', () => {
+        const nomeDigitado = inputNome.value.trim();
 
-    if (nomeDigitado) {
-        docRef.set({
-            nome: nomeDigitado,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp() 
-        })
-        .then(() => {
-            console.log("Nome salvo com sucesso!");
-            inputNome.value = '';
-        })
-        .catch((error) => {
-            console.error("Erro ao salvar o nome: ", error);
-            alert("Não foi possível salvar os dados. Verifique o console.");
-        });
-    } else {
-        alert("Por favor, digite um nome.");
-    }
-});
+        if (nomeDigitado) {
+            recadosRef.add({
+                nome: nomeDigitado,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+            })
+            .then(() => {
+                console.log("Recado salvo com ID único!");
+                inputNome.value = '';
+            })
+            .catch((error) => {
+                console.error("Erro ao salvar o recado: ", error);
+                alert("Não foi possível salvar. Verifique o console.");
+            });
+        } else {
+            alert("Por favor, digite um recado.");
+        }
+    });
 
 
 btnRemover.addEventListener('click', () => {
